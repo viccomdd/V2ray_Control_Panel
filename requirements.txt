@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+python-multipart
+jinja2
+aiofiles
+python-jose
+requests
+pycryptodome
+SQLAlchemy
+zmq

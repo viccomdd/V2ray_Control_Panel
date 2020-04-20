@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>V2ray_Control - 运行状态</title>
+    <!--<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>-->
+    <link rel="icon" href="/static/imgs/favicon.ico">
+    <link rel="stylesheet" href="/static/mdui/css/mdui.min.css">
+    <style>
+        pre {
+            margin: 0px;
+            padding: 5px;
+            width: 250px;
+            height: 250px;
+            white-space: pre-wrap; /* css-3 */
+            white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+            white-space: -o-pre-wrap; /* Opera 7 */
+            word-wrap: break-word; /* Internet Explorer 5.5+ */
+        }
+    </style>
+
+</head>
+<body class="mdui-appbar-with-toolbar mdui-theme-primary-teal mdui-theme-accent-light-blue mdui-loaded mdui-drawer-body-left">
+
+<!--顶部栏 start-->
+<header class="mdui-appbar mdui-appbar-fixed">
+    <div class="mdui-toolbar mdui-color-theme">
+        <span class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" mdui-drawer="{target: '#main-drawer', swipe: true}"><i class="mdui-icon material-icons">menu</i></span>
+        <a href="./" class="mdui-typo-headline mdui-hidden-xs">Control Pannel</a>
+        <span class="mdui-typo-title">运行参数</span>
+        <div class="mdui-toolbar-spacer"></div>
+
+        <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white refresh" mdui-tooltip="{content: '刷新'}">
+            <i class="mdui-icon material-icons">refresh</i>
+        </button>
+        <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white exit_to_app" mdui-tooltip="{content: '退出'}">
+            <i class="mdui-icon material-icons">exit_to_app</i>
+        </button>
+    </div>
+</header>
+<!--顶部栏 end-->
+
+<!--左侧导航 start-->
+<div class="mdui-drawer" id="main-drawer">
+    <div class="mdui-list" mdui-collapse="{accordion: true}">
+        <div class="mdui-collapse-item mdui-collapse-item-open">
+            <div class="mdui-collapse-item-header mdui-list-item mdui-ripple">
+                <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-blue">settings</i>
+                <div class="mdui-list-item-content">控制面板</div>
+                <i class="mdui-collapse-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+            </div>
+            <div class="mdui-collapse-item-body mdui-list">
+                <span class="mdui-list-item mdui-ripple menu2 mdui-list-item-active" data-id="menu2">用户列表</span>
+                <span class="mdui-list-item mdui-ripple menu3" data-id="menu3">应用列表</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--左侧导航 end-->
+
+    <!--主视图 Start-->
+    <div class="mdui-container" style="margin-top: 10px; padding: 0px">
+        <!--面板2 Start-->
+        <div class="mdui-row menu2">
+
+            <div class="mdui-table-fluid" style="margin-bottom: 10px; padding: 0px">
+                <div>
+                    <table class="mdui-table mdui-color-grey-300 v2rayInfo" style="margin: 0; padding: 0">
+                        <tbody>
+                        <tr>
+                            <td>---</td>
+                            <td>---</td>
+                            <td>---</td>
+                            <td>---</td>
+                            <td>---</td>
+                            <td>---</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mdui-table-fluid">
+                <table class="mdui-table">
+                    <thead>
+                    <tr>
+                        <th width="25%"><span class="mdui-card-primary-title">用户</span></th>
+                        <th width="50%"><span class="mdui-card-primary-title">UUID</span></th>
+                        <th width="25%"><span class="mdui-card-primary-title">操作</span></th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <div class="mdui-table-fluid" style="max-height: 450px; margin-top: 4px; margin-bottom: 4px; padding: 0px">
+                <table class="mdui-table v2ray-clients">
+                    <tbody>
+                    <tr>
+                        <td>---</td>
+                        <td>无数据</td>
+                        <td>
+                            <!--<button class="mdui-btn mdui-btn-icon useredit"><i class="mdui-icon material-icons">edit</i>-->
+                            <!--</button>-->
+                            <!--<button class="mdui-btn mdui-btn-icon userdelete"><i-->
+                                    <!--class="mdui-icon material-icons">delete</i></button>-->
+                            <!--<button class="mdui-btn mdui-btn-icon usershare"><i-->
+                                    <!--class="mdui-icon material-icons">share</i></button>-->
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+        </div>
+        <!--面板2 End-->
+
+        <!--面板3 Start-->
+        <div class="mdui-row menu3 mdui-hidden">
+
+            <div class="mdui-table-fluid" style="margin-bottom: 10px; padding: 0px">
+                <div>
+                    <table class="mdui-table mdui-color-grey-300 v2rayInfo" style="margin: 0; padding: 0">
+                        <tbody>
+                        <tr>
+                            <td>---</td>
+                            <td>---</td>
+                            <td>---</td>
+                            <td>---</td>
+                            <td>---</td>
+                            <td>---</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mdui-table-fluid">
+                <table class="mdui-table v2ray-apps">
+                    <thead>
+                    <tr>
+                        <th><span class="mdui-card-primary-title">运行平台</span></th>
+                        <th><span class="mdui-card-primary-title">应用名称</span></th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr>
+                        <td><i class="mdui-icon material-icons">desktop_windows</i> DESKTOP_WINDOWS</td>
+                        <td>
+                            <div class="mdui-chip"
+                                 onclick="window.open('https://github.com/2dust/v2rayN/releases/latest'); ">
+                                <span class="mdui-chip-icon mdui-color-green"><i class="mdui-icon material-icons">file_download</i></span>
+                                <span class="mdui-chip-title">V2rayN </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><i class="mdui-icon material-icons">android</i>    ANDROID</td>
+                        <td>
+                            <div class="mdui-chip" onclick="window.open('https://github.com/2dust/v2rayNG/releases/latest'); ">
+                                <span class="mdui-chip-icon mdui-color-green"><i class="mdui-icon material-icons">file_download</i></span>
+                                <span class="mdui-chip-title">V2rayNG </span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+
+                    <tr>
+                        <td><i class="mdui-icon material-icons">desktop_mac</i> DESKTOP_MAC</td>
+                        <td>
+                            <div class="mdui-chip" onclick="window.open('https://github.com/Cenmrev/V2RayX/releases/latest'); ">
+                                <span class="mdui-chip-icon mdui-color-green"><i class="mdui-icon material-icons">file_download</i></span>
+                                <span class="mdui-chip-title">V2rayX </span>
+                            </div>
+                        </td>
+                    </tr>
+
+                        <td><i class="mdui-icon material-icons">tablet_mac</i>    TABLET_MAC</td>
+                        <td>
+                            <div class="mdui-chip"
+                                 onclick="window.open('https://www.apple.com/us/search/Kitsunebi?src=globalnav'); ">
+                                <span class="mdui-chip-icon mdui-color-green"><i class="mdui-icon material-icons">file_download</i></span>
+                                <span class="mdui-chip-title">Kitsunebi </span>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+        <!--面板3 Start-->
+
+    </div>
+    <!--主视图 End-->
+    <p></p>
+    <div class="mdui-hidden">
+        <input id="vmessContent" value="">
+        <button class="vmess-copy" data-clipboard-target="#vmessContent">copy</button>
+    </div>
+
+
+
+</body>
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/static/js/jquery-3.3.1.min.js"></script>
+    <script src="/static/js/jquery.cookie.js"></script>
+    <script src="/static/js/jquery.qrcode.min.js"></script>
+    <script src="/static/mdui/js/mdui.min.js"></script>
+    <script src="/static/js/clipboard.min.js"></script>
+	<script type="text/javascript">
+		var jsversion = Date.parse(new Date());
+		document.write("<script type='text/javascript' src='/static/userjs/login.js?v="+jsversion+"'></s"+"cript>");
+		document.write("<script type='text/javascript' src='/static/userjs/v2ray.js?v="+jsversion+"'></s"+"cript>");
+	</script>
+<script>
+    var clipboard = new ClipboardJS('.vmess-copy', {
+        text: function() {
+            return $("#vmessContent").val();
+        }
+    });
+    clipboard.on('success', function (e) {
+        console.log('copy ok');
+        // console.log(e);
+    });
+    clipboard.on('error', function (e) {
+        console.log('copy error');
+        // console.log(e);
+    });
+</script>
+<script type="text/javascript">
+
+    $("body").on("click", "span.mdui-list-item", function () {
+        var dataid = $(this).data("id");
+        console.log(dataid);
+        $('span.mdui-typo-title').text($('span.' + dataid).text());
+        $('span.' + dataid).addClass("mdui-list-item-active");
+        $('span.' + dataid).siblings().removeClass("mdui-list-item-active");
+        //
+        $("div." + dataid).removeClass("mdui-hidden");
+        $("div." + dataid).siblings().addClass("mdui-hidden");
+        // console.log($("div." + dataid).siblings());
+        var sUserAgent = navigator.userAgent;
+        var inst = new mdui.Drawer('#main-drawer');
+        if (sUserAgent.indexOf('Android') > -1 || sUserAgent.indexOf('iPhone') > -1 || sUserAgent.indexOf('iPad') > -1 || sUserAgent.indexOf('iPod') > -1 || sUserAgent.indexOf('Symbian') > -1) {
+            inst.close();
+        } else {
+            inst.open();
+        }
+        // var windowWidth = $(window).width();
+        // if(windowWidth < 640){
+        //     var inst = new mdui.Drawer('#main-drawer');
+        //     inst.close();
+        // }
+
+    });
+
+    // function open_vmess() {
+    //     window.window.location.href=document.getElementById('vmess_link').innerHTML
+    // }
+
+
+    $('button.useradd').click(function () {
+        // dialoginst.open();
+        var newuser = 'User_' + makeid();
+        var newuuid = guid1();
+        mdui.dialog({
+            title: '新用户',
+            modal: true,
+            content: '<div class="mdui-textfield">\n' +
+                '<div class="mdui-col-md-11">' +
+                '  <i class="mdui-icon material-icons">account_circle</i>\n' +
+                '  <input class="mdui-textfield-input" name="newuser" type="text" value="' + newuser + '" placeholder="UserName"/>\n' +
+                '</div>\n' +
+                '</div>\n' +
+                '<div class="mdui-textfield">\n' +
+                '<div class="mdui-col-md-11">' +
+                '  <i class="mdui-icon material-icons">fingerprint</i>\n' +
+                '  <input class="mdui-textfield-input" name="newuuid" type="text" value="' + newuuid + '" placeholder="UUID" readonly/>\n' +
+                '</div>\n' +
+                '<div class="mdui-col-md-1">' +
+                '<button class="mdui-btn mdui-btn-icon regenerate"><i class="mdui-icon material-icons">find_replace</i></button>\n' +
+                '</div>\n' +
+                '</div>\n',
+            buttons: [
+                {
+                    text: '关闭'
+                },
+                {
+                    text: '确定',
+                    onClick: function (inst) {
+                        // mdui.alert('点击确认按钮的回调');
+                        var v1 = $("input[name='newuuid']").val();
+                        var v2 = $("input[name='newuser']").val();
+                        var userObj = {
+                            "id": v1,
+                            "desc": v2,
+                            "alterId": 64
+                        };
+                        localv2rayObj.clients.push(userObj);
+                        // console.log(localv2rayObj);
+                        var clients  = localv2rayObj.clients;
+                        var clientstable = $("table.v2ray-clients tbody");
+                        creat_users_table(clients, clientstable);
+                    }
+                }
+            ]
+        });
+
+
+        $("body").on("click", "button.regenerate", function () {
+            $("input[name='newuuid']").val(guid2());
+        });
+
+
+    });
+
+
+    $('button.config-save').click(function () {
+        // console.log(localv2rayObj);
+        // console.log(v2rayObj);
+        post_serverConfig(v2rayObj);
+
+    });
+
+    $('button.config-apply').click(function () {
+        // console.log(localv2rayObj);
+        // console.log(v2rayObj);
+        apply_serverConfig(v2rayObj);
+    });
+
+    $('button.restore_page').click(function () {
+        load_defaultConfig();
+    });
+
+    $('button.refresh').click(function () {
+        get_v2rayInfo();
+        get_serverConfig();
+    });
+
+    $('button.system_update').click(function () {
+        update_v2ray();
+    });
+
+    $('button.exit_to_app').click(function () {
+        logout();
+    });
+</script>
+
+<script type="text/javascript">
+
+</script>
+</html>
