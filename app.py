@@ -22,9 +22,7 @@ from logging.handlers import TimedRotatingFileHandler
 from logging.handlers import RotatingFileHandler
 from v2ray_console.v2rayCrypto import appconfigLoad, appconfigSave, V2rayCryp
 from v2ray_console.v2ray import V2ray
-from asyncio import Queue
 
-queue: Queue = None
 
 formatter = "[%(asctime)s] :: %(levelname)s :: %(name)s :: %(message)s"
 log_level = 'INFO'
