@@ -22,7 +22,6 @@ from logging.handlers import TimedRotatingFileHandler
 from logging.handlers import RotatingFileHandler
 from v2ray_console.v2rayCrypto import appconfigLoad, appconfigSave, V2rayCryp
 from v2ray_console.v2ray import V2ray
-from zmq_app import ZMQServer
 from asyncio import Queue
 
 queue: Queue = None
@@ -42,7 +41,6 @@ fh = RotatingFileHandler('./logs/v2ray_console.log', mode='a+', maxBytes=log_max
 fh.setFormatter(logging.Formatter(formatter))
 log.addHandler(fh)
 
-zmqs = ZMQServer()
 v2rayApps = [['desktop_windows', 'v2rayN', '2dust', 'v2rayN', 'v2rayN-Core.zip'],
              ['android', 'v2rayNG', '2dust', 'v2rayNG', 'v2rayNG_1.2.4.apk'],
              ['desktop_mac', 'V2RayX', 'Cenmrev', 'V2RayX', 'V2RayX.app.zip'],
