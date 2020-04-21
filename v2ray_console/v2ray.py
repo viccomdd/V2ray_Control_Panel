@@ -104,6 +104,7 @@ def GetReleases(author, repo, filename):
 	url = "https://api.github.com/repos/" + author + '/' + repo + "/releases/latest"
 	try:
 		r = requests.get(url, timeout=6)
+		# print(json.dumps(r.json(), sort_keys=True, indent=4, separators=(',', ':')))
 		if r and r.status_code == 200:
 			# print(json.dumps(r.json(), sort_keys=True, indent=4, separators=(',', ':')))
 			files = r.json()
@@ -120,7 +121,7 @@ def GetReleases(author, repo, filename):
 
 def GetReleases_longtime(author, repo, filename, count=5):
 	r = None
-	while not r or count == 0:
+	while not r and count > 0:
 		r = GetReleases(author, repo, filename)
 		count = count - 1
 		if r:
@@ -230,8 +231,6 @@ class V2ray:
 				if lasttime and int(time.time()) - lasttime < 86400:
 					v2rayAppsFiles = v2rayAppsdict.get('data')
 					remoteRead = False
-				else:
-					os.remove(v2rayAppsPath)
 			else:
 				logging.error("v2ray_console/v2rayApps.json read error")
 				os.remove(v2rayAppsPath)
