@@ -22,6 +22,10 @@ from logging.handlers import TimedRotatingFileHandler
 from logging.handlers import RotatingFileHandler
 from v2ray_console.v2rayCrypto import appconfigLoad, appconfigSave, V2rayCryp
 from v2ray_console.v2ray import V2ray
+from zmq_app import ZMQServer
+from asyncio import Queue
+
+queue: Queue = None
 
 formatter = "[%(asctime)s] :: %(levelname)s :: %(name)s :: %(message)s"
 log_level = 'INFO'
@@ -38,20 +42,18 @@ fh = RotatingFileHandler('./logs/v2ray_console.log', mode='a+', maxBytes=log_max
 fh.setFormatter(logging.Formatter(formatter))
 log.addHandler(fh)
 
+zmqs = ZMQServer()
 v2rayApps = [['desktop_windows', 'v2rayN', '2dust', 'v2rayN', 'v2rayN-Core.zip'],
              ['android', 'v2rayNG', '2dust', 'v2rayNG', 'v2rayNG_1.2.4.apk'],
              ['desktop_mac', 'V2RayX', 'Cenmrev', 'V2RayX', 'V2RayX.app.zip'],
              ['tablet_mac', 'Kitsunebi', 'noppefoxwolf', 'Kitsunebi',
               'https://www.apple.com/us/search/Kitsunebi?src=globalnav']]
 
-
-# rtlog = RTLOG()
-# logging.info("Staring rtlog ..")
-# rtlog.start()
-
 class v2rayItems(BaseModel):
 	config: dict
 
+class UserItems(BaseModel):
+	UserItems: dict
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -61,10 +63,6 @@ v2raydata = appconfigLoad('v2ray_console/v2ray.ini')
 secret_key = v2raydata.get('key2')
 vaes = V2rayCryp(v2raydata.get('key1'))
 users = json.loads(vaes.decrypt(v2raydata.get('users')))
-print(json.dumps(users, sort_keys=True, indent=4, separators=(',', ':')))
-
-# secret_key = "v2ray_secret_key"
-# users = {"admin": {"password": "admin"}}
 
 
 def turnfile(file):
@@ -113,7 +111,7 @@ def get_current_user(session: str = Depends(cookie_sec)):
 		payload = jwt.decode(session, secret_key)
 		user = payload["user"]
 		if payload.get('timesec'):
-			if 0 <= int(time.time()) - int(payload.get('timesec')) < 3600:
+			if 0 <= int(time.time()) - int(payload.get('timesec')) < 86400:
 				# print(payload)
 				return user
 			else:
@@ -199,7 +197,7 @@ def read_private(username: str = Depends(get_current_user)):
 
 
 @app.get("/api/ping")
-def api_ping(response: Response, username: str = Depends(get_current_user)):
+async def api_ping(response: Response, username: str = Depends(get_current_user)):
 	token = jwt.encode({"user": username, "timesec": int(time.time())}, secret_key)
 	response.set_cookie("session", token)
 	response.set_cookie("username", username)
@@ -221,7 +219,8 @@ async def api_serverConfig(username: str = Depends(get_current_user)):
 		logging.info("/etc/v2ray/config.json is nonexistent,")
 		return {"result": False, "message": None}
 	serverConfig: dict = loadconfig("/etc/v2ray/config.json")
-	return {"result": True, "message": serverConfig}
+	stats = V2ray.v2rayStats()
+	return {"result": True, "message": serverConfig, "stats": stats}
 
 
 @app.post("/api/serverConfig")
@@ -353,6 +352,22 @@ def api_v2rayRestart(username: str = Depends(get_current_user)):
 		return {"result": False, "message": 'failed'}
 
 
+@app.put("/api/user")
+async def api_user(response: Response, UserItems: UserItems, username: str = Depends(get_current_user)):
+	UserItems = UserItems.dict().get('UserItems')
+	if UserItems.get('userid') == username:
+		if UserItems.get('lastpass') == users[username]["password"]:
+			users[username]["password"] = UserItems.get('newpass')
+			secstr = vaes.encrypt(json.dumps(users))
+			v2raydata['users'] = secstr
+			appconfigSave('v2ray_console/v2ray.ini', v2raydata)
+			return {"result": True, "message": "successful"}
+		else:
+			return {"result": False, "message": "failed, lastpass is incorrect"}
+	else:
+		return {"result": False, "message": "error, current user is not " + str(UserItems.get('userid'))}
+
+
 @app.get("/api/v2rayApps")
 def api_v2rayApps_fileurl():
 	r = V2ray.v2rayApps_fileurl(v2rayApps)
@@ -385,7 +400,10 @@ if __name__ == '__main__':
 	else:
 		V2ray.check()
 	logging.info("当前工作路径：" + str(os.getcwd()) + ",启动参数:debug=" + str(debug))
+	# logging.info("Staring ZMQServer ..")
+	# zmqs.start()
 	time.sleep(1)
+	app.run()
 	(filename, extension) = os.path.splitext(os.path.basename(__file__))
 	appStr = filename + ':app'
 	uvicorn.run(appStr, host="127.0.0.1", port=8000, reload=debug)

@@ -63,7 +63,7 @@
         var patt = /^[a-z0-9]+$/i;
         var extracode =$("#extracode").val();
         if(extracode === ''){
-            $("#extracode").val("none-extracode");
+            $("#extracode").val("nonExtracode");
         }else if(!patt.test(extracode)){
             $("#extracode").val("");
             $("div.login-tip").removeClass('hide');
