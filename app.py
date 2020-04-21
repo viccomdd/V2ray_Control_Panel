@@ -398,10 +398,7 @@ if __name__ == '__main__':
 	else:
 		V2ray.check()
 	logging.info("当前工作路径：" + str(os.getcwd()) + ",启动参数:debug=" + str(debug))
-	# logging.info("Staring ZMQServer ..")
-	# zmqs.start()
 	time.sleep(1)
-	app.run()
 	(filename, extension) = os.path.splitext(os.path.basename(__file__))
 	appStr = filename + ':app'
 	uvicorn.run(appStr, host="127.0.0.1", port=8000, reload=debug)
