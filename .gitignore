@@ -138,3 +138,4 @@ v2ray_console/v2rayApps.json
 test*.py
 v2ray_console/v2ray.ini
 v2ray.ini
+_upload.cmd

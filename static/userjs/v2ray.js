@@ -170,11 +170,19 @@ function creat_users_table(obj, tableobj) {
 
     if (current_user === 'dajiji') {
         if (extracode !== undefined) {
+            var userstat = '';
+            if (val.hasOwnProperty('uplink')) {
+                if(parseInt(val.downlink) > 1000000){
+                    userstat = (Math.ceil(parseInt(val.uplink)/1000000)).toString() + " MB / " + (Math.ceil(parseInt(val.downlink)/1000000)).toString() + " MB";
+                }else{
+                    userstat = (Math.ceil(parseInt(val.uplink)/1000)).toString() + " KB / " + (Math.ceil(parseInt(val.downlink)/1000)).toString() + " KB";
+                }
+            }
             $.each(obj, function (i, val) {
                 if (extracode === val.desc) {
                     trhtml = trhtml + '<tr>' +
                         '<td  width="35%">' + extracode + '</td>' +
-                        '<td  width="40%">' + val.id + '</td>' +
+                        '<td  width="40%">' + userstat + '</td>' +
                         '<td  width="25%">' +
                         '<button class="mdui-btn mdui-btn-icon usershare"  mdui-tooltip="{content: \'查看用户配置\'}" data-user = "' + extracode + '" data-uuid="' + val.id + '"><i class="mdui-icon material-icons">share</i></button>' +
                         '<button class="mdui-btn mdui-btn-icon useredit"  mdui-tooltip="{content: \'修改用户信息\'}" data-user = "' + extracode + '" data-uuid="' + val.id + '"><i class="mdui-icon material-icons">edit</i></button>' +
@@ -187,12 +195,19 @@ function creat_users_table(obj, tableobj) {
     } else {
         $.each(obj, function (i, val) {
             var user = '';
-            if (val.hasOwnProperty('desc')) {
-                user = val.desc;
+            if (val.hasOwnProperty('email')) {
+                user = val.email;
             }
+            var userstat = '';
+            if (val.hasOwnProperty('uplink')) {
+                if(parseInt(val.downlink) > 1000000){
+                    userstat = (Math.ceil(parseInt(val.uplink)/1000000)).toString() + " MB / " + (Math.ceil(parseInt(val.downlink)/1000000)).toString() + " MB";
+                }else{
+                    userstat = (Math.ceil(parseInt(val.uplink)/1000)).toString() + " KB / " + (Math.ceil(parseInt(val.downlink)/1000)).toString() + " KB";
+                }            }
             trhtml = trhtml + '<tr>' +
                 '<td  width="35%">' + user + '</td>' +
-                '<td  width="40%">' + val.id + '</td>' +
+                '<td  width="40%">' + userstat + '</td>' +
                 '<td  width="25%">' +
                 '<button class="mdui-btn mdui-btn-icon usershare"  mdui-tooltip="{content: \'查看用户配置\'}" data-user = "' + user + '" data-uuid="' + val.id + '"><i class="mdui-icon material-icons">share</i></button>' +
                 '<button class="mdui-btn mdui-btn-icon useredit"  mdui-tooltip="{content: \'修改用户信息\'}" data-user = "' + user + '" data-uuid="' + val.id + '"><i class="mdui-icon material-icons">edit</i></button>' +
@@ -463,8 +478,24 @@ function get_serverConfig() {
                         if (inbound.hasOwnProperty('settings')) {
                             localv2rayObj.clients = inbound.settings.clients;
                             var clients = inbound.settings.clients;
+                            var clients_new = new Array();
+                            if(req.stats.length > 0){
+                                var stats = req.stats;
+                                $.each(clients, function (i, val) {
+                                    var clientname = val.email;
+                                    $.each(stats, function (j, s) {
+                                        if(s[0] === 'user' && s[1] === clientname){
+                                            val[s[3]] =s[4];
+                                        }
+                                    })
+                                    clients_new.push(val);
+                                });
+
+
+                            }
+                            // console.log("clients_new::", clients_new);
                             var clientstable = $("table.v2ray-clients tbody");
-                            creat_users_table(clients, clientstable);
+                            creat_users_table(clients_new, clientstable);
                         }
 
                     }
