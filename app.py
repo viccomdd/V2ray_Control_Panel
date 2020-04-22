@@ -23,7 +23,6 @@ from logging.handlers import RotatingFileHandler
 from v2ray_console.v2rayCrypto import appconfigLoad, appconfigSave, V2rayCryp
 from v2ray_console.v2ray import V2ray
 
-
 formatter = "[%(asctime)s] :: %(levelname)s :: %(name)s :: %(message)s"
 log_level = 'INFO'
 log_filenum = 9
@@ -45,11 +44,14 @@ v2rayApps = [['desktop_windows', 'v2rayN', '2dust', 'v2rayN', 'v2rayN-Core.zip']
              ['tablet_mac', 'Kitsunebi', 'noppefoxwolf', 'Kitsunebi',
               'https://www.apple.com/us/search/Kitsunebi?src=globalnav']]
 
+
 class v2rayItems(BaseModel):
 	config: dict
 
+
 class UserItems(BaseModel):
 	UserItems: dict
+
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -74,6 +76,7 @@ def turnfile(file):
 			with open(file, 'w', newline='\n', encoding='utf-8') as f:
 				f.write(data_str)
 
+
 def loadconfig(path):
 	with open(path, 'r') as load_f:
 		try:
@@ -81,6 +84,7 @@ def loadconfig(path):
 			return load_dict
 		except Exception as ex:
 			logging.error(str(ex))
+
 
 def saveconfig(path, data):
 	# print(json.dumps(data, sort_keys=True, indent=4, separators=(',', ':')))
@@ -93,10 +97,12 @@ def saveconfig(path, data):
 		load_dict = json.load(load_f)
 		return load_dict
 
+
 def alter(file, old_str, new_str):
 	if os.path.exists("v2ray_console/new-v2rayTproxy.sh"):
 		os.remove("v2ray_console/new-v2rayTproxy.sh")
-	with open("v2ray_console/" + file, "r", newline='\n', encoding="utf-8") as f1, open("v2ray_console/" + "new-%s" % file, "w", encoding="utf-8") as f2:
+	with open("v2ray_console/" + file, "r", newline='\n', encoding="utf-8") as f1, open(
+			"v2ray_console/" + "new-%s" % file, "w", encoding="utf-8") as f2:
 		for line in f1:
 			f2.write(re.sub(old_str, new_str, line))
 	turnfile("v2ray_console/new-v2rayTproxy.sh")
@@ -158,7 +164,7 @@ def login(request: Request, response: Response, username: str = Form(...), passw
 	response.set_cookie("username", username)
 	if extracode:
 		response.set_cookie("extracode", extracode)
-	logging.info(username + ' login ok')
+	logging.info(username + ' login from ' + str(request.client.host))
 	return {"result": True, "message": 'ok'}
 
 
@@ -177,6 +183,7 @@ def logout(request: Request, response: Response, username: str = Depends(get_cur
 @app.get("/tproxydown")
 def tproxydown():
 	return RedirectResponse("/tproxyshell?" + str(int(time.time())))
+
 
 @app.get("/tproxyshell")
 def tproxyshell():
@@ -197,7 +204,8 @@ def read_private(username: str = Depends(get_current_user)):
 
 
 @app.get("/api/ping")
-async def api_ping(response: Response, username: str = Depends(get_current_user)):
+async def api_ping(request: Request, response: Response, username: str = Depends(get_current_user)):
+	logging.info(username + ' ping from ' + str(request.client.host))
 	token = jwt.encode({"user": username, "timesec": int(time.time())}, secret_key)
 	response.set_cookie("session", token)
 	response.set_cookie("username", username)
