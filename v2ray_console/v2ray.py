@@ -115,7 +115,7 @@ def GetReleases(author, repo, filename):
 						browser_download_url = file.get('browser_download_url')
 						break
 	except Exception as ex:
-		print(ex)
+		logging.exception(str(ex))
 	finally:
 		return browser_download_url
 
@@ -180,7 +180,7 @@ class V2ray:
 		if not os.path.exists(path):
 			logging.info(path + " is nonexistent,")
 			return None
-		cmd_str = "tail -10 " + path
+		cmd_str = "tail -100 " + path
 		codemethod = 'utf-8'
 		pattern = r'[\r\n]+'
 		if (platform.system() != "Linux"):
@@ -228,7 +228,7 @@ class V2ray:
 			v2rayAppsdict = loadconfig(v2rayAppsPath)
 			if v2rayAppsdict:
 				lasttime = v2rayAppsdict.get('timestamp')
-				if lasttime and int(time.time()) - lasttime < 86400:
+				if lasttime and int(time.time()) - lasttime < 186400:
 					v2rayAppsFiles = v2rayAppsdict.get('data')
 					remoteRead = False
 			else:
@@ -241,11 +241,14 @@ class V2ray:
 					v2rayAppsFiles.append(file)
 				else:
 					r = GetReleases_longtime(app[2], app[3], app[4])
-					if not r:
+					if r:
+						file = {"platform": app[0], "appName": app[1], "author": app[2], "repo": app[3], "filename": r}
+						v2rayAppsFiles.append(file)
+					else:
 						saveFlag = False
+						v2rayAppsFiles = []
 						break
-					file = {"platform": app[0], "appName": app[1], "author": app[2], "repo": app[3], "filename": r}
-					v2rayAppsFiles.append(file)
+
 			# print(json.dumps(v2rayAppsFiles, sort_keys=True, indent=4, separators=(',', ':')))
 			if saveFlag:
 				v2rayAppsdict = {"timestamp": int(time.time()), "data": v2rayAppsFiles}

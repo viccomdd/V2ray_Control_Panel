@@ -58,7 +58,7 @@ cookie_sec = APIKeyCookie(name="session")
 v2raydata = appconfigLoad('v2ray_console/v2ray.ini')
 secret_key = v2raydata.get('key2')
 vaes = V2rayCryp(v2raydata.get('key1'))
-users = json.loads(vaes.decrypt(v2raydata.get('users')))
+v2rayUsers = json.loads(vaes.decrypt(v2raydata.get('users')))
 
 
 def turnfile(file):
@@ -107,14 +107,18 @@ def get_current_user(session: str = Depends(cookie_sec)):
 		payload = jwt.decode(session, secret_key)
 		user = payload["user"]
 		if payload.get('timesec'):
+			logging.info(user + "::" + str(int(time.time()) - int(payload.get('timesec'))))
 			if 0 <= int(time.time()) - int(payload.get('timesec')) < 86400:
 				# print(payload)
 				return user
 			else:
+				logging.error(user + ' login is Expired')
 				raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="session out of date")
 		else:
+			logging.error(user + ' login is Expired')
 			raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="session out of date")
-	except Exception:
+	except Exception as ex:
+		logging.exception(str(ex))
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid authentication")
 
 
@@ -144,9 +148,9 @@ async def login(request: Request):
 @app.post("/login")
 def login(request: Request, response: Response, username: str = Form(...), password: str = Form(...),
           extracode: str = Form(...)):
-	if username not in users:
+	if username not in v2rayUsers:
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid user")
-	db_password = users[username]["password"]
+	db_password = v2rayUsers[username]["password"]
 	if not password == db_password:
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid password")
 	token = jwt.encode({"user": username, "timesec": int(time.time())}, secret_key)
@@ -154,7 +158,7 @@ def login(request: Request, response: Response, username: str = Form(...), passw
 	response.set_cookie("username", username)
 	if extracode:
 		response.set_cookie("extracode", extracode)
-	log.info(username + ' login ok')
+	logging.info(username + ' login ok')
 	return {"result": True, "message": 'ok'}
 
 
@@ -296,13 +300,13 @@ def api_v2rayInfo(username: str = Depends(get_current_user)):
 	try:
 		v2ray_version = bytes.decode(
 			subprocess.check_output("/usr/bin/v2ray/v2ray -version | head -n 1 | awk '{print $2}'", shell=True))
-	except Exception:
-		pass
+	except Exception as ex:
+		logging.exception(str(ex))
 	try:
 		v2ray_statusStr = bytes.decode(
 			subprocess.check_output("systemctl status v2ray|grep Active: | awk '{print $3}'", shell=True))
-	except Exception:
-		pass
+	except Exception as ex:
+		logging.exception(str(ex))
 	finally:
 		if v2ray_statusStr and 'running' in v2ray_statusStr:
 			v2ray_statusStr = 'running'
@@ -352,9 +356,9 @@ def api_v2rayRestart(username: str = Depends(get_current_user)):
 async def api_user(response: Response, UserItems: UserItems, username: str = Depends(get_current_user)):
 	UserItems = UserItems.dict().get('UserItems')
 	if UserItems.get('userid') == username:
-		if UserItems.get('lastpass') == users[username]["password"]:
-			users[username]["password"] = UserItems.get('newpass')
-			secstr = vaes.encrypt(json.dumps(users))
+		if UserItems.get('lastpass') == v2rayUsers[username]["password"]:
+			v2rayUsers[username]["password"] = UserItems.get('newpass')
+			secstr = vaes.encrypt(json.dumps(v2rayUsers))
 			v2raydata['users'] = secstr
 			appconfigSave('v2ray_console/v2ray.ini', v2raydata)
 			return {"result": True, "message": "successful"}

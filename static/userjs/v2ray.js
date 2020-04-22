@@ -459,7 +459,7 @@ function get_serverConfig() {
         contentType: "application/json; charset=utf-8",
         dataType:'json',
         success: function (req) {
-            console.log(req);
+            // console.log(req);
             if (req.message) {
                 $(".v2rayAction").prop('disabled', false);
                 v2rayObj = req.message;
