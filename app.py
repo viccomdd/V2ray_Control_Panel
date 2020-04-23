@@ -160,10 +160,10 @@ def login(request: Request, response: Response, username: str = Form(...), passw
 	if not password == db_password:
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid password")
 	token = jwt.encode({"user": username, "timesec": int(time.time())}, secret_key)
-	response.set_cookie("session", token)
-	response.set_cookie("username", username)
+	response.set_cookie("session", token, max_age=86400)
+	response.set_cookie("username", username, max_age=86400)
 	if extracode:
-		response.set_cookie("extracode", extracode)
+		response.set_cookie("extracode", extracode, max_age=86400)
 	logging.info(username + ' login from ' + str(request.client.host))
 	return {"result": True, "message": 'ok'}
 
@@ -207,8 +207,8 @@ def read_private(username: str = Depends(get_current_user)):
 async def api_ping(request: Request, response: Response, username: str = Depends(get_current_user)):
 	logging.info(username + ' ping from ' + str(request.client.host))
 	token = jwt.encode({"user": username, "timesec": int(time.time())}, secret_key)
-	response.set_cookie("session", token)
-	response.set_cookie("username", username)
+	response.set_cookie("session", token, max_age=86400)
+	response.set_cookie("username", username, max_age=86400)
 	return {"result": True, "message": username}
 
 
