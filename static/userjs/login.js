@@ -30,6 +30,40 @@ function isLogin(){
 }
 
 /**
+ *	changePassword
+ */
+function changePwd(userid, lastpass, newpass, Dialog) {
+    $.ajax({
+        url: '/api/user',
+        headers: {
+            Accept: "application/json; charset=utf-8",
+        },
+        type: 'put',
+        data: JSON.stringify({"UserItems": {"userid": userid,"lastpass": lastpass, "newpass": newpass} }),
+        contentType: "application/json; charset=utf-8",
+        dataType: 'json',
+        success: function (req) {
+            // console.log('successful: ', req);
+            if(req.result){
+                mdui.snackbar({
+                  message: '修改成功'
+                });
+                Dialog.close();
+            }else{
+                mdui.snackbar({
+                  message: '修改失败: ' + req.message
+                });
+            }
+        },
+        error: function (req) {
+            console.log('failed: ', req);
+        }
+    });
+
+}
+
+
+/**
  *	logout
  */
 function logout() {
