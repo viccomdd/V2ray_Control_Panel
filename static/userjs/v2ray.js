@@ -467,7 +467,14 @@ function get_serverConfig() {
                 if (tempv2rayObj.hasOwnProperty('inbounds')) {
                     var inbounds = tempv2rayObj.inbounds;
                     if (inbounds.length > 0) {
-                        var inbound = inbounds[0];
+                        var inbound = null;
+                        $.each(inbounds, function(i, val){
+                            if(val.port === 54321){
+                                inbound = val;
+                            }
+
+                        });
+                        // var inbound = inbounds[0];
                         localv2rayObj.streamSettings = inbound.streamSettings;
                         // $.each(inbound, function(k, v){
                         //     console.log(k ,v);

@@ -209,7 +209,7 @@ class V2ray:
 		v2ray_stats = []
 		v2ray_stats_str = bytes.decode(subprocess.check_output("v2ctl api --server=127.0.0.1:10085  StatsService.QueryStats 'pattern: \"\" reset: false'", shell=True))
 		for i, v in enumerate(re.split(r'stat:', v2ray_stats_str)):
-			if len(v) > 0:
+			if len(v) > 1:
 				rr = re.split(r'[\r\n]+', v.strip())
 				a = rr[1].strip().replace("\"", "")
 				b = rr[2].strip()

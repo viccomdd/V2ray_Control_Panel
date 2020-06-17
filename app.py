@@ -22,6 +22,7 @@ from logging.handlers import TimedRotatingFileHandler
 from logging.handlers import RotatingFileHandler
 from v2ray_console.v2rayCrypto import appconfigLoad, appconfigSave, V2rayCryp
 from v2ray_console.v2ray import V2ray
+# from mqtt_app import MQTTPubBase
 
 formatter = "[%(asctime)s] :: %(levelname)s :: %(name)s :: %(message)s"
 log_level = 'INFO'
@@ -61,6 +62,8 @@ v2raydata = appconfigLoad('v2ray_console/v2ray.ini')
 secret_key = v2raydata.get('key2')
 vaes = V2rayCryp(v2raydata.get('key1'))
 v2rayUsers = json.loads(vaes.decrypt(v2raydata.get('users')))
+# mqttConfig = {"host": "dongbala.top", "port": "1883", "user": "viccom", "pwd": "2623824"}
+# app.mqttc = MQTTPubBase('v2ray', mqttConfig)
 
 
 def turnfile(file):
@@ -126,6 +129,27 @@ def get_current_user(session: str = Depends(cookie_sec)):
 	except Exception as ex:
 		logging.exception(str(ex))
 		raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid authentication")
+
+
+# def sub_mqttpub(sub_mqttc, sub_topic, sub_payload):
+# 	if sub_mqttc.is_alive():
+# 		if sub_mqttc.status():
+# 			sub_mqttc.publish(sub_topic, sub_payload)
+# 	else:
+# 		sub_mqttc = MQTTPubBase('v2ray', mqttConfig)
+# 		sub_mqttc.start()
+
+
+@app.on_event("startup")
+async def startup():
+	pass
+	# app.mqttc.start()
+
+
+@app.on_event("shutdown")
+async def shutdown():
+	pass
+	# app.mqttc.stop()
 
 
 @app.get("/")
@@ -409,6 +433,7 @@ if __name__ == '__main__':
 		V2ray.check()
 	logging.info("当前工作路径：" + str(os.getcwd()) + ",启动参数:debug=" + str(debug))
 	time.sleep(1)
+	# app.mqttc.start()
 	(filename, extension) = os.path.splitext(os.path.basename(__file__))
 	appStr = filename + ':app'
 	uvicorn.run(appStr, host="127.0.0.1", port=8000, reload=debug)
